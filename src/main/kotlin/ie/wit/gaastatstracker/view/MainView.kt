@@ -18,13 +18,13 @@ class MainView : View("GAA Stats Tracker") {
         button{
             this.text = "New Match"
             action {
-                print("Move to next Screen!")
+                replaceWith<NewMatch>()
             }
         }
         button{
             this.text = "Load Match"
             action {
-                print("Move to Load Match Screen")
+               replaceWith<LoadMatch>()
             }
         }
     }

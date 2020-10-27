@@ -1,4 +1,4 @@
-package ie.wit.gaastatstracker
+package ie.wit.gaastatstracker.app
 
 import ie.wit.gaastatstracker.app.MyApp
 import tornadofx.launch
