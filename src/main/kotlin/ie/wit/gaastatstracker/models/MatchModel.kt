@@ -2,13 +2,13 @@ package ie.wit.gaastatstracker.models
 
 import tornadofx.ItemViewModel
 
-class AssignModel: ItemViewModel<Match>() {
+class MatchModel: ItemViewModel<Match>() {
 
-    val gameID = bind(Match::gameIDProperty)
-    val teamName = bind(Match::teamNameProperty)
-    val teamGoals = bind(Match::teamGoalsProperty)
-    val teamPoints = bind(Match::teamPointsProperty)
-    val oppName = bind(Match::oppNameProperty)
-    val oppGoals = bind(Match::oppGoalsProperty)
-    val oppPoints = bind(Match::oppPointsProperty)
+    var gameID = bind(Match::gameIDProperty)
+    var teamName = bind(Match::teamNameProperty)
+    var teamGoals = bind(Match::teamGoalsProperty)
+    var teamPoints = bind(Match::teamPointsProperty)
+    var oppName = bind(Match::oppNameProperty)
+    var oppGoals = bind(Match::oppGoalsProperty)
+    var oppPoints = bind(Match::oppPointsProperty)
 }

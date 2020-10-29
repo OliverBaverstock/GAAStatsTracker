@@ -1,11 +1,24 @@
 package ie.wit.gaastatstracker.view
 
+import ie.wit.gaastatstracker.controller.MainController
+import ie.wit.gaastatstracker.models.Match
+import ie.wit.gaastatstracker.models.MatchModel
+import ie.wit.gaastatstracker.view.TableView
 import javafx.geometry.Pos
 import javafx.scene.layout.VBox
 import tornadofx.*
+import javax.swing.JTable
+
+
+
 
 class LoadMatch : View("Load Match") {
 
+    //class MainController : Controller()
+    val mainController: MainController by inject()
+   // val tableView: TableView by inject()
+
+    private val model : MatchModel by inject()
 
     override val root: VBox = vbox {
 
@@ -14,7 +27,7 @@ class LoadMatch : View("Load Match") {
 
         hbox {
             label("Game ID")
-            gameID = textfield()
+            textfield(model.gameID)
             alignment = Pos.TOP_CENTER
             spacing = 10.0
         }
@@ -24,17 +37,17 @@ class LoadMatch : View("Load Match") {
                 fieldset("Home Team"){
                     vbox{
                         spacing = 10.0
-                        field("Team Name"){ teamName = textfield()}
-                        field("Team Goals"){teamGoals = textfield()}
-                        field("Team Points"){teamPoints = textfield()}
+                        field("Team Name"){textfield(model.teamName)}
+                        field("Team Goals"){textfield(model.teamGoals)}
+                        field("Team Points"){textfield(model.teamPoints)}
                     }
                 }
                 fieldset("Opposition Team"){
                     vbox{
                         spacing = 10.0
-                        field("Opp Name"){ oppName = textfield()}
-                        field("Opp Goals"){oppGoals = textfield()}
-                        field("Opp Points"){oppPoints = textfield()}
+                        field("Opp Name"){textfield(model.oppName)}
+                        field("Opp Goals"){textfield(model.oppGoals)}
+                        field("Opp Points"){textfield(model.oppPoints)}
                     }
                 }
             }
@@ -62,10 +75,20 @@ class LoadMatch : View("Load Match") {
                 }
             }
         }
-
-        tabelview(Matches){
-
+        val matchData = mainController.matchList().asObservable()
+        tableview(matchData) {
+            //items = mainController.matchData1
+            title = "Match"
+            column("Game ID", Match::gameID)
+            readonlyColumn("Team Name", Match::teamName)
+            readonlyColumn("Team Goals", Match::teamGoals)
+            readonlyColumn("Team Points", Match::teamPoints)
+            readonlyColumn("Opposition Name", Match::oppName)
+            readonlyColumn("Opposition Goals", Match::oppGoals)
+            readonlyColumn("Opposition Points", Match::oppPoints)
+            bindSelected(model)
+            smartResize()
         }
-
+        }
     }
-}
+

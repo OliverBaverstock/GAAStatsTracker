@@ -1,22 +1,25 @@
 package ie.wit.gaastatstracker.view
 
 import ie.wit.gaastatstracker.app.Styles
+import ie.wit.gaastatstracker.models.Match
+import ie.wit.gaastatstracker.models.MatchModel
 import javafx.geometry.Pos
 import javafx.scene.control.TextField
 import javafx.scene.layout.VBox
 import tornadofx.*
 import java.net.URI
 
-var gameID: TextField by singleAssign()
-var teamName: TextField by singleAssign()
-var teamGoals: TextField by singleAssign()
-var teamPoints: TextField by singleAssign()
-
-var oppName: TextField by singleAssign()
-var oppGoals: TextField by singleAssign()
-var oppPoints: TextField by singleAssign()
+//var gameID: TextField by singleAssign()
+//var teamName: TextField by singleAssign()
+//var teamGoals: TextField by singleAssign()
+//var teamPoints: TextField by singleAssign()
+//
+//var oppName: TextField by singleAssign()
+//var oppGoals: TextField by singleAssign()
+//var oppPoints: TextField by singleAssign()
 
 class NewMatch : View("New Match") {
+    val model : MatchModel by inject()
     override val root: VBox = vbox {
 
         spacing = 10.0
@@ -24,7 +27,7 @@ class NewMatch : View("New Match") {
 
         hbox {
             label("Game ID")
-            gameID = textfield()
+            textfield(model.gameID)
             alignment = Pos.TOP_CENTER
             spacing = 10.0
         }
@@ -34,17 +37,17 @@ class NewMatch : View("New Match") {
                 fieldset("Home Team"){
                     vbox{
                         spacing = 10.0
-                        field("Team Name"){ teamName = textfield()}
-                        field("Team Goals"){teamGoals = textfield()}
-                        field("Team Points"){teamPoints = textfield()}
+                        field("Team Name"){textfield(model.teamName)}
+                        field("Team Goals"){textfield(model.teamGoals)}
+                        field("Team Points"){textfield(model.teamPoints)}
                     }
                 }
                 fieldset("Opposition Team"){
                     vbox{
                         spacing = 10.0
-                        field("Opp Name"){ oppName = textfield()}
-                        field("Opp Goals"){oppGoals = textfield()}
-                        field("Opp Points"){oppPoints = textfield()}
+                        field("Opp Name"){textfield(model.oppName)}
+                        field("Opp Goals"){textfield(model.oppGoals)}
+                        field("Opp Points"){textfield(model.oppPoints)}
                     }
                 }
             }
