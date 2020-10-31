@@ -1,6 +1,7 @@
 package ie.wit.gaastatstracker.controller
 
 import ie.wit.gaastatstracker.models.Match
+import ie.wit.gaastatstracker.view.LoadMatch
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import tornadofx.Controller
@@ -9,6 +10,7 @@ import tornadofx.asObservable
 
 import java.sql.*
 import java.util.*
+import javax.swing.JOptionPane
 //import java.util.*
 import kotlin.collections.ArrayList
 
@@ -20,19 +22,19 @@ class MainController: Controller() {
     private val userName = "root"
 
     /** The password for the MySQL account (or empty for anonymous)  */
-    private val password = "root"
+    private val password = "roottoor"
 
     /** The name of the computer running MySQL  */
     private val serverName = "localhost"
 
     /** The port of the MySQL server (default is 8889)  */
-    private val portNumber = 8889
+    private val portNumber = 3306
 
     /** The name of the database we are testing with (this default is installed with MySQL)  */
     private val dbName = "matchesDB"
 
     /** The name of the table we are testing with  */
-    private val tableName = "matches"
+    val tableName = "matches"
 
     private var conn: Connection? = null
 
@@ -55,20 +57,9 @@ class MainController: Controller() {
         return matchList
     }
 
-    val matchData = SortedFilteredList(items = matchList().asObservable())
+    //val matchData = SortedFilteredList(items = matchList().asObservable())
 
-    fun getAllMatches(): List<Match> = matchList()
-
-    //val matchData = SortedFilteredList(items = getMatches().asObservable())
-    //fun getMatches(): ObservableList<Match> = matchList().asObservable()
-
-    val matchData1: ObservableList<Match> = FXCollections.observableArrayList(getAllMatches())
-
-    //val matchData2: ObservableList<Match> = FXCollections.observableArrayList<Match>(
-    //    Match(gameID = 1, teamName = "Carrigtwohill", teamGoals = 1, teamPoints = 8, oppName = "Midleton",
-    //    oppGoals = 1, oppPoints = 4
-    //        )
-    //)
+    //fun getAllMatches(): List<Match> = matchList()
 
     @Throws(SQLException::class)
     fun getConnection(): Connection? {
@@ -97,5 +88,27 @@ class MainController: Controller() {
             return
         }
     }
+
+//    fun search(){
+//        try{
+//            val conn: Connection? = getConnection()
+//            val s: PreparedStatement
+//            s = conn!!.prepareStatement("select * from " + tableName + " where gameID = ?")
+//            s.setString(1, LoadMatch.model.gameID.value)
+//            val rs = s.executeQuery()
+//            if (rs.next()) {
+//                firstNameField.setText(rs.getString("fName"))
+//                lastNameField.setText(rs.getString("lName"))
+//                ssnNumberField.setText(rs.getString("ssnNumber"))
+//                salaryTextField.setText(rs.getString("salary"))
+//                s.close()
+//                showEmployee()
+//            } else {
+//                JOptionPane.showMessageDialog(null, "Record Not Found \nPlease enter a valid SSN Number")
+//            }
+//        } catch (ex: SQLException) {
+//            ex.printStackTrace()
+//        }
+//    }
 
 }

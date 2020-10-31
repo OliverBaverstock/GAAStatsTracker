@@ -1,22 +1,11 @@
 package ie.wit.gaastatstracker.view
 
-import ie.wit.gaastatstracker.app.Styles
-import ie.wit.gaastatstracker.models.Match
+
 import ie.wit.gaastatstracker.models.MatchModel
 import javafx.geometry.Pos
-import javafx.scene.control.TextField
 import javafx.scene.layout.VBox
 import tornadofx.*
-import java.net.URI
 
-//var gameID: TextField by singleAssign()
-//var teamName: TextField by singleAssign()
-//var teamGoals: TextField by singleAssign()
-//var teamPoints: TextField by singleAssign()
-//
-//var oppName: TextField by singleAssign()
-//var oppGoals: TextField by singleAssign()
-//var oppPoints: TextField by singleAssign()
 
 class NewMatch : View("New Match") {
     val model : MatchModel by inject()
