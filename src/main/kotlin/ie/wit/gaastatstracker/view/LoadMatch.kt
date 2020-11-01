@@ -12,12 +12,13 @@ import tornadofx.*
 
 class LoadMatch : View("Load Match") {
 
-    val mainController: MainController by inject()
+    val MainController: MainController by inject()
     val CRUDController: CRUDController by inject()
 
-    private val model : MatchModel by inject()
 
-    val gameID = model.gameID
+    val model : MatchModel by inject()
+
+    var gameID = model.gameID
     val teamName = model.teamName
     val teamGoals = model.teamGoals
     val teamPoints = model.teamPoints
@@ -79,22 +80,39 @@ class LoadMatch : View("Load Match") {
                 this.text = "Delete Match"
                 action {
                     println("Update Match")
+                    CRUDController.delete()
+                }
+            }
+            button{
+                this.text = "Update Match"
+                action {
+//                    println("Update Match")
+//                    val match = model.item
+//                    println(match.teamName)
+//                    CRUDController.update()
+                    saveNewTable()
                 }
             }
         }
-        val matchData = mainController.matchList().asObservable()
-        tableview(matchData) {
+
+        tableview<Match> {
+            items = MainController.listOfMatches
             title = "Match"
             column("Game ID", Match::gameID)
-            readonlyColumn("Team Name", Match::teamName)
-            readonlyColumn("Team Goals", Match::teamGoals)
-            readonlyColumn("Team Points", Match::teamPoints)
-            readonlyColumn("Opposition Name", Match::oppName)
-            readonlyColumn("Opposition Goals", Match::oppGoals)
-            readonlyColumn("Opposition Points", Match::oppPoints)
+            column("Team Name", Match::teamName)
+            column("Team Goals", Match::teamGoals)
+            column("Team Points", Match::teamPoints)
+            column("Opposition Name", Match::oppName)
+            column("Opposition Goals", Match::oppGoals)
+            column("Opposition Points", Match::oppPoints)
             bindSelected(model)
             smartResize()
         }
         }
+
+    fun saveNewTable(){
+        model.commit()
+        CRUDController.update()
+    }
     }
 

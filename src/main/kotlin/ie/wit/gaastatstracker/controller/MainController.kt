@@ -7,6 +7,7 @@ import javafx.collections.ObservableList
 import tornadofx.Controller
 import tornadofx.SortedFilteredList
 import tornadofx.asObservable
+import tornadofx.singleAssign
 
 import java.sql.*
 import java.util.*
@@ -57,9 +58,9 @@ class MainController: Controller() {
         return matchList
     }
 
-    //val matchData = SortedFilteredList(items = matchList().asObservable())
+    val listOfMatches: ObservableList<Match> = matchList().asObservable()
 
-    //fun getAllMatches(): List<Match> = matchList()
+    //val items: ObservableList<Match> by singleAssign()
 
     @Throws(SQLException::class)
     fun getConnection(): Connection? {
@@ -80,6 +81,7 @@ class MainController: Controller() {
         // Connect to MySQL
         try {
             conn = getConnection()
+            matchList()
             println("Connected to database")
         } catch (e: SQLException) {
             println("2ERROR: Could not connect to the database")
@@ -88,27 +90,4 @@ class MainController: Controller() {
             return
         }
     }
-
-//    fun search(){
-//        try{
-//            val conn: Connection? = getConnection()
-//            val s: PreparedStatement
-//            s = conn!!.prepareStatement("select * from " + tableName + " where gameID = ?")
-//            s.setString(1, LoadMatch.model.gameID.value)
-//            val rs = s.executeQuery()
-//            if (rs.next()) {
-//                firstNameField.setText(rs.getString("fName"))
-//                lastNameField.setText(rs.getString("lName"))
-//                ssnNumberField.setText(rs.getString("ssnNumber"))
-//                salaryTextField.setText(rs.getString("salary"))
-//                s.close()
-//                showEmployee()
-//            } else {
-//                JOptionPane.showMessageDialog(null, "Record Not Found \nPlease enter a valid SSN Number")
-//            }
-//        } catch (ex: SQLException) {
-//            ex.printStackTrace()
-//        }
-//    }
-
 }

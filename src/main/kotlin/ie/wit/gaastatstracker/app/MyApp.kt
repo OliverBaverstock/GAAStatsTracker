@@ -14,5 +14,6 @@ class MyApp: App(MainView::class, Styles::class) {
         }
         super.start(stage)
         MainController.connectSQL()
+
     }
 }
