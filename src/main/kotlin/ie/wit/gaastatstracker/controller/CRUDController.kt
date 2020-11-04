@@ -5,9 +5,14 @@ import ie.wit.gaastatstracker.models.MatchModel
 import ie.wit.gaastatstracker.view.LoadMatch
 import ie.wit.gaastatstracker.view.NewMatch
 import javafx.beans.property.Property
+import javafx.scene.control.Alert
+import javafx.scene.control.ButtonType
 import sun.applet.Main
 import tornadofx.Controller
 import tornadofx.asObservable
+import tornadofx.asyncItems
+import java.awt.Dialog
+import java.awt.Window
 import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.SQLException
@@ -125,25 +130,34 @@ class CRUDController: Controller() {
     }
 
     fun update(){
-        try {
-            val conn: Connection? = MainController.getConnection()
-            val s: PreparedStatement
-            s = conn!!.prepareStatement("update " + MainController.tableName + " set gameID = ?, teamName = ?, teamGoals = ?, teamPoints = ?, oppName = ?, oppGoals = ?, oppPoints = ? where gameID = ?")
-            s.setInt(1, LoadMatch.gameID.value)
-            s.setString(2, LoadMatch.teamName.value)
-            s.setInt(3, LoadMatch.teamGoals.value)
-            s.setInt(4, LoadMatch.teamPoints.value)
-            s.setString(5, LoadMatch.oppName.value)
-            s.setInt(6, LoadMatch.oppGoals.value)
-            s.setInt(7, LoadMatch.oppPoints.value)
-            s.setInt(8, LoadMatch.gameID.value)
-            val count = s.executeUpdate()
-            println("$count rows were updated")
-            updateTable(model)
-            s.close()
-        } catch (ex: SQLException) {
-            ex.printStackTrace()
+            if (LoadMatch.gameID.value != 0 && LoadMatch.teamName.value != null && LoadMatch.teamGoals.value != null && LoadMatch.teamPoints.value != null
+                && LoadMatch.oppName.value != null && LoadMatch.oppGoals.value != null && LoadMatch.oppPoints.value != null
+            ) {
+                try {
+                val conn: Connection? = MainController.getConnection()
+                val s: PreparedStatement
+                s =
+                    conn!!.prepareStatement("update " + MainController.tableName + " set gameID = ?, teamName = ?, teamGoals = ?, teamPoints = ?, oppName = ?, oppGoals = ?, oppPoints = ? where gameID = ?")
+                s.setInt(1, LoadMatch.gameID.value)
+                s.setString(2, LoadMatch.teamName.value)
+                s.setInt(3, LoadMatch.teamGoals.value)
+                s.setInt(4, LoadMatch.teamPoints.value)
+                s.setString(5, LoadMatch.oppName.value)
+                s.setInt(6, LoadMatch.oppGoals.value)
+                s.setInt(7, LoadMatch.oppPoints.value)
+                s.setInt(8, LoadMatch.gameID.value)
+                val count = s.executeUpdate()
+                println("$count rows were updated")
+                s.close()
+                MainController.listOfMatches.asyncItems { MainController.matchList() }
+            } catch (ex: SQLException) {
+                ex.printStackTrace()
+            }
         }
+        else{
+               // JOptionPane.showMessageDialog(null,  "Please enter valid information to Update!!!!");
+                println("Can't update!!")
+            }
     }
 
     fun resetFields(){
@@ -154,22 +168,5 @@ class CRUDController: Controller() {
         NewMatch.oppName.set("")
         NewMatch.oppGoals.set(0)
         NewMatch.oppPoints.set(0)
-    }
-
-    private fun updateTable(model: MatchModel){
-        var id = 0
-        MainController.listOfMatches.forEachIndexed { index, match ->
-            if(match.gameID == model.gameID.value && index != -1){
-                MainController.listOfMatches[id].teamName = model.teamName.value
-                MainController.listOfMatches[id].teamGoals = model.teamGoals.value
-                MainController.listOfMatches[id].teamPoints = model.teamPoints.value
-                MainController.listOfMatches[id].teamName = model.oppName.value
-                MainController.listOfMatches[id].teamGoals = model.oppGoals.value
-                MainController.listOfMatches[id].teamPoints = model.oppPoints.value
-            }
-            else{
-                //Ignore
-            }
-        }
     }
 }

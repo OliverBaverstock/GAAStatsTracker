@@ -8,6 +8,7 @@ import javafx.beans.property.SimpleIntegerProperty
 import javafx.geometry.Pos
 import javafx.scene.layout.VBox
 import tornadofx.*
+import javafx.scene.paint.Color
 
 
 class LoadMatch : View("Load Match") {
