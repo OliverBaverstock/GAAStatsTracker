@@ -73,24 +73,18 @@ class LoadMatch : View("Load Match") {
             button{
                 this.text = "Load Match"
                 action {
-                    println("Save Match")
                     CRUDController.search()
                 }
             }
             button{
                 this.text = "Delete Match"
                 action {
-                    println("Update Match")
                     CRUDController.delete()
                 }
             }
             button{
                 this.text = "Update Match"
                 action {
-//                    println("Update Match")
-//                    val match = model.item
-//                    println(match.teamName)
-//                    CRUDController.update()
                     saveNewTable()
                 }
             }

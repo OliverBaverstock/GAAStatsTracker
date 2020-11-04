@@ -66,7 +66,6 @@ class NewMatch : View("New Match") {
             button{
                 this.text = "Save Match"
                 action {
-                    println("Save Match")
                     CRUDController.add()
                 }
             }

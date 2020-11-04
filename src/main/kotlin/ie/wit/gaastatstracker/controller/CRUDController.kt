@@ -28,50 +28,62 @@ class CRUDController: Controller() {
     val model: MatchModel by inject()
 
     fun search(){
-        try{
-            val conn: Connection? = MainController.getConnection()
-            val s: PreparedStatement
-            s = conn!!.prepareStatement("select * from " + MainController.tableName + " where gameID = ?")
-            s.setInt(1, LoadMatch.gameID.value)
-            val rs = s.executeQuery()
-            if (rs.next()) {
-                LoadMatch.teamName.set(rs.getString("teamName"))
-                LoadMatch.teamGoals.set(rs.getInt("teamGoals"))
-                LoadMatch.teamPoints.set(rs.getInt("teamPoints"))
-                LoadMatch.oppName.set(rs.getString("oppName"))
-                LoadMatch.oppGoals.set(rs.getInt("oppGoals"))
-                LoadMatch.oppPoints.set(rs.getInt("oppPoints"))
-                s.close()
-            } else {
-                JOptionPane.showMessageDialog(null, "Record Not Found \nPlease enter a valid SSN Number")
+        if (LoadMatch.gameID.value >= 1
+        ) {
+            try {
+                val conn: Connection? = MainController.getConnection()
+                val s: PreparedStatement
+                s = conn!!.prepareStatement("select * from " + MainController.tableName + " where gameID = ?")
+                s.setInt(1, LoadMatch.gameID.value)
+                val rs = s.executeQuery()
+                if (rs.next()) {
+                    LoadMatch.teamName.set(rs.getString("teamName"))
+                    LoadMatch.teamGoals.set(rs.getInt("teamGoals"))
+                    LoadMatch.teamPoints.set(rs.getInt("teamPoints"))
+                    LoadMatch.oppName.set(rs.getString("oppName"))
+                    LoadMatch.oppGoals.set(rs.getInt("oppGoals"))
+                    LoadMatch.oppPoints.set(rs.getInt("oppPoints"))
+                    s.close()
+                } else {
+                    JOptionPane.showMessageDialog(null, "Record Not Found \nPlease enter a valid SSN Number")
+                }
+            } catch (ex: SQLException) {
+                ex.printStackTrace()
             }
-        } catch (ex: SQLException) {
-            ex.printStackTrace()
+        }
+        else{
+            println("Can't Load!!")
         }
     }
 
     fun delete(){
-        try {
-            val conn: Connection? = MainController.getConnection()
-            val s: PreparedStatement
-            s = conn!!.prepareStatement("delete from " + MainController.tableName + " where gameID = ?")
-            s.setInt(1, LoadMatch.gameID.value)
-            deleteFromTable(model)
-            val count = s.executeUpdate()
-            if (count == 0) {
-                JOptionPane.showMessageDialog(null, "Record Not Found \nPlease enter a valid SSN Number")
+        if (LoadMatch.gameID.value >= 1
+        ) {
+            try {
+                val conn: Connection? = MainController.getConnection()
+                val s: PreparedStatement
+                s = conn!!.prepareStatement("delete from " + MainController.tableName + " where gameID = ?")
+                s.setInt(1, LoadMatch.gameID.value)
+                deleteFromTable(model)
+                val count = s.executeUpdate()
+                if (count == 0) {
+                    JOptionPane.showMessageDialog(null, "Record Not Found \nPlease enter a valid SSN Number")
+                }
+                LoadMatch.gameID.set(0)
+                LoadMatch.teamName.set("")
+                LoadMatch.teamGoals.set(0)
+                LoadMatch.teamPoints.set(0)
+                LoadMatch.oppName.set("")
+                LoadMatch.oppGoals.set(0)
+                LoadMatch.oppPoints.set(0)
+                s.close()
+                println("$count rows were deleted")
+            } catch (ex: SQLException) {
+                ex.printStackTrace()
             }
-            LoadMatch.gameID.set(0)
-            LoadMatch.teamName.set("")
-            LoadMatch.teamGoals.set(0)
-            LoadMatch.teamPoints.set(0)
-            LoadMatch.oppName.set("")
-            LoadMatch.oppGoals.set(0)
-            LoadMatch.oppPoints.set(0)
-            s.close()
-            println("$count rows were deleted")
-        } catch (ex: SQLException) {
-            ex.printStackTrace()
+        }
+        else{
+            println("Can't delete!!")
         }
     }
 
@@ -103,25 +115,39 @@ class CRUDController: Controller() {
     }
 
     fun add(){
-        try {
-            val conn: Connection? =  MainController.getConnection()
-            val s: PreparedStatement
-            s = conn!!.prepareStatement("INSERT INTO " + MainController.tableName + " VALUES(?,?,?,?,?,?,?)")
-            s.setInt(1, NewMatch.gameID.value)
-            s.setString(2, NewMatch.teamName.value)
-            s.setInt(3, NewMatch.teamGoals.value)
-            s.setInt(4, NewMatch.teamPoints.value)
-            s.setString(5, NewMatch.oppName.value)
-            s.setInt(6, NewMatch.oppGoals.value)
-            s.setInt(7, NewMatch.oppPoints.value)
-            val count = s.executeUpdate()
-            s.close()
-            val match = Match(model.gameID.value, model.teamName.value, model.teamGoals.value, model.teamPoints.value, model.oppName.value, model.oppGoals.value, model.oppPoints.value)
-            createMatch(match)
-            println("$count rows were inserted")
-        } catch (ex: SQLException) {
-            JOptionPane.showMessageDialog(null, "No Record Updated \nPlease enter a valid SSN Number")
-            ex.printStackTrace()
+        if (LoadMatch.gameID.value >= 1 && LoadMatch.teamName.value != "" && LoadMatch.oppName.value != ""
+        ) {
+            try {
+                val conn: Connection? = MainController.getConnection()
+                val s: PreparedStatement
+                s = conn!!.prepareStatement("INSERT INTO " + MainController.tableName + " VALUES(?,?,?,?,?,?,?)")
+                s.setInt(1, NewMatch.gameID.value)
+                s.setString(2, NewMatch.teamName.value)
+                s.setInt(3, NewMatch.teamGoals.value)
+                s.setInt(4, NewMatch.teamPoints.value)
+                s.setString(5, NewMatch.oppName.value)
+                s.setInt(6, NewMatch.oppGoals.value)
+                s.setInt(7, NewMatch.oppPoints.value)
+                val count = s.executeUpdate()
+                s.close()
+                val match = Match(
+                    model.gameID.value,
+                    model.teamName.value,
+                    model.teamGoals.value,
+                    model.teamPoints.value,
+                    model.oppName.value,
+                    model.oppGoals.value,
+                    model.oppPoints.value
+                )
+                createMatch(match)
+                println("$count rows were inserted")
+            } catch (ex: SQLException) {
+                JOptionPane.showMessageDialog(null, "No Record Updated \nPlease enter a valid SSN Number")
+                ex.printStackTrace()
+            }
+        }
+        else{
+            println("Can't add!!")
         }
     }
 
@@ -130,8 +156,7 @@ class CRUDController: Controller() {
     }
 
     fun update(){
-            if (LoadMatch.gameID.value != 0 && LoadMatch.teamName.value != null && LoadMatch.teamGoals.value != null && LoadMatch.teamPoints.value != null
-                && LoadMatch.oppName.value != null && LoadMatch.oppGoals.value != null && LoadMatch.oppPoints.value != null
+            if (LoadMatch.gameID.value >= 1 && LoadMatch.teamName.value != "" && LoadMatch.oppName.value != ""
             ) {
                 try {
                 val conn: Connection? = MainController.getConnection()
@@ -155,7 +180,6 @@ class CRUDController: Controller() {
             }
         }
         else{
-               // JOptionPane.showMessageDialog(null,  "Please enter valid information to Update!!!!");
                 println("Can't update!!")
             }
     }
