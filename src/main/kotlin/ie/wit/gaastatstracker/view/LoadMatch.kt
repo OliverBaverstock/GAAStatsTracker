@@ -4,11 +4,9 @@ import ie.wit.gaastatstracker.controller.CRUDController
 import ie.wit.gaastatstracker.controller.MainController
 import ie.wit.gaastatstracker.models.Match
 import ie.wit.gaastatstracker.models.MatchModel
-import javafx.beans.property.SimpleIntegerProperty
 import javafx.geometry.Pos
 import javafx.scene.layout.VBox
 import tornadofx.*
-import javafx.scene.paint.Color
 
 
 class LoadMatch : View("Load Match") {
@@ -19,6 +17,7 @@ class LoadMatch : View("Load Match") {
 
     val model : MatchModel by inject()
 
+    //Creates variables to use in text fields and sets them to the model variables
     var gameID = model.gameID
     val teamName = model.teamName
     val teamGoals = model.teamGoals
@@ -28,17 +27,20 @@ class LoadMatch : View("Load Match") {
     val oppGoals = model.oppGoals
     val oppPoints = model.oppPoints
 
+    //Creates a verticle box
     override val root: VBox = vbox {
 
         spacing = 10.0
         alignment = Pos.CENTER
 
+        //Creates horizontal box for the gameID textfield
         hbox {
             label("Game ID")
             textfield(gameID)
             alignment = Pos.TOP_CENTER
             spacing = 10.0
         }
+        //Creates a form to hold text fields
         form{
             alignment = Pos.CENTER
             hbox(10){
@@ -60,6 +62,7 @@ class LoadMatch : View("Load Match") {
                 }
             }
         }
+        //Creates a horizontal box to hold the buttons
         hbox {
             alignment = Pos.CENTER
             spacing = 30.0
@@ -85,14 +88,18 @@ class LoadMatch : View("Load Match") {
             button{
                 this.text = "Update Match"
                 action {
-                    saveNewTable()
+                    //saveNewTable()
+                    CRUDController.update()
                 }
             }
         }
 
+        //Creates the table view
         tableview<Match> {
+            //Sets the items to the list of matches created in the Main Controller
             items = MainController.listOfMatches
             title = "Match"
+            //Creates the columns and sets them the the corresponding attribute from the mysql db stored in the list of matches
             column("Game ID", Match::gameID)
             column("Team Name", Match::teamName)
             column("Team Goals", Match::teamGoals)
@@ -104,10 +111,5 @@ class LoadMatch : View("Load Match") {
             smartResize()
         }
         }
-
-    fun saveNewTable(){
-        model.commit()
-        CRUDController.update()
-    }
     }
 

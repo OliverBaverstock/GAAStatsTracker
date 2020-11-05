@@ -12,6 +12,7 @@ class NewMatch : View("New Match") {
     val model : MatchModel by inject()
     val CRUDController: CRUDController by inject()
 
+    //Initializing variables to be used for text fields
     val gameID = model.gameID
     val teamName = model.teamName
     val teamGoals = model.teamGoals
@@ -21,17 +22,20 @@ class NewMatch : View("New Match") {
     val oppGoals = model.oppGoals
     val oppPoints = model.oppPoints
 
+    //Creates a vertical box
     override val root: VBox = vbox {
 
         spacing = 10.0
         alignment = Pos.CENTER
 
+        //Creates a horizontal box to hold the GameID textfields
         hbox {
             label("Game ID")
             textfield(gameID)
             alignment = Pos.TOP_CENTER
             spacing = 10.0
         }
+        //Creates a form to hold the other textfields
         form{
             alignment = Pos.CENTER
             hbox(10){
@@ -53,22 +57,26 @@ class NewMatch : View("New Match") {
                 }
             }
         }
+        //Creates a horizontal box to store the buttons
         hbox {
             alignment = Pos.CENTER
             spacing = 30.0
 
+            //Returns to user to the main view
             button{
                 this.text = "Return"
                 action {
                     replaceWith<MainView>()
                 }
             }
+            //Saves the entered info using the add function in the CRUDController
             button{
                 this.text = "Save Match"
                 action {
                     CRUDController.add()
                 }
             }
+            //Resets all the fields to the original state
             button{
                 this.text = "Reset Fields"
                 action {

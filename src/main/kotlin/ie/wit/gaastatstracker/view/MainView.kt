@@ -11,12 +11,9 @@ import tornadofx.*
 
 class MainView : View("GAA Stats Tracker") {
 
-    val MainController: MainController by inject()
     val CRUDController: CRUDController by inject()
 
     override val root: VBox = vbox {
-
-        var x = 0
 
         alignment = Pos.CENTER
         spacing = 10.0
@@ -25,6 +22,7 @@ class MainView : View("GAA Stats Tracker") {
             addClass(Styles.heading)
         }
 
+        //Button to change view to newMatch and reset fields
         button{
             this.text = "New Match"
             action {
@@ -32,6 +30,7 @@ class MainView : View("GAA Stats Tracker") {
                 replaceWith<NewMatch>()
             }
         }
+        //Button to change view to Load match and reset fields
         button{
             this.text = "Load Match"
             action {

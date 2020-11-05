@@ -5,7 +5,7 @@ import javafx.beans.property.SimpleStringProperty
 
 import tornadofx.*
 
-
+//Creates a class of type Match and initializes the attributes of Match
 class Match(
     gameID: Int = 0,
     teamName: String? = null,

@@ -4,19 +4,11 @@ import ie.wit.gaastatstracker.models.Match
 import ie.wit.gaastatstracker.models.MatchModel
 import ie.wit.gaastatstracker.view.LoadMatch
 import ie.wit.gaastatstracker.view.NewMatch
-import javafx.beans.property.Property
-import javafx.scene.control.Alert
-import javafx.scene.control.ButtonType
-import sun.applet.Main
 import tornadofx.Controller
-import tornadofx.asObservable
 import tornadofx.asyncItems
-import java.awt.Dialog
-import java.awt.Window
 import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.SQLException
-import java.sql.Statement
 import javax.swing.JOptionPane
 
 
@@ -27,13 +19,16 @@ class CRUDController: Controller() {
     val NewMatch: NewMatch by inject()
     val model: MatchModel by inject()
 
+    //Search function to Load a chosen match based on the gameID
     fun search(){
         if (LoadMatch.gameID.value >= 1
         ) {
             try {
                 val conn: Connection? = MainController.getConnection()
                 val s: PreparedStatement
+                //Selects data from table based on given gameID
                 s = conn!!.prepareStatement("select * from " + MainController.tableName + " where gameID = ?")
+                //Sets the gameID in the statement
                 s.setInt(1, LoadMatch.gameID.value)
                 val rs = s.executeQuery()
                 if (rs.next()) {
@@ -45,7 +40,7 @@ class CRUDController: Controller() {
                     LoadMatch.oppPoints.set(rs.getInt("oppPoints"))
                     s.close()
                 } else {
-                    JOptionPane.showMessageDialog(null, "Record Not Found \nPlease enter a valid SSN Number")
+                    println("Can't Load!!")
                 }
             } catch (ex: SQLException) {
                 ex.printStackTrace()
@@ -56,6 +51,7 @@ class CRUDController: Controller() {
         }
     }
 
+    //Deletes a chosen entry in the table based on the gameID entered
     fun delete(){
         if (LoadMatch.gameID.value >= 1
         ) {
@@ -64,18 +60,14 @@ class CRUDController: Controller() {
                 val s: PreparedStatement
                 s = conn!!.prepareStatement("delete from " + MainController.tableName + " where gameID = ?")
                 s.setInt(1, LoadMatch.gameID.value)
+                //Calls function to delete entry on the front end to match the backend
                 deleteFromTable(model)
                 val count = s.executeUpdate()
                 if (count == 0) {
                     JOptionPane.showMessageDialog(null, "Record Not Found \nPlease enter a valid SSN Number")
                 }
-                LoadMatch.gameID.set(0)
-                LoadMatch.teamName.set("")
-                LoadMatch.teamGoals.set(0)
-                LoadMatch.teamPoints.set(0)
-                LoadMatch.oppName.set("")
-                LoadMatch.oppGoals.set(0)
-                LoadMatch.oppPoints.set(0)
+                //Resets textfields to original state after a delete
+                resetFields()
                 s.close()
                 println("$count rows were deleted")
             } catch (ex: SQLException) {
@@ -87,8 +79,10 @@ class CRUDController: Controller() {
         }
     }
 
+    //Deletes the deleted entry from the tableview so frontend matches with the backend
     private fun deleteFromTable(model: MatchModel){
         var id = 0
+        //Deletes the entry based on the gameID taken from the model in the delete function
         MainController.listOfMatches.forEachIndexed { index, match ->
             if(match.gameID == model.gameID.value && index != -1){
                 id = index
@@ -97,24 +91,9 @@ class CRUDController: Controller() {
         MainController.listOfMatches.removeAt(id)
     }
 
-    //CREATE/INSERT/UPDATE/DELETE/DROP/etc
-    @Throws(SQLException::class)
-    fun executeUpdate(conn: Connection, command: String?): Boolean {
-        var stmt: Statement? = null
-        return try {
-            stmt = conn.createStatement()
-            stmt.executeUpdate(command) // This will throw a SQLException if it fails
-            true
-        } finally {
-
-            // This will run whether we throw an exception or not
-            if (stmt != null) {
-                stmt.close()
-            }
-        }
-    }
-
+    //Adds a match to the database and updates the tableview
     fun add(){
+        //Will only add if the game ID is greater than 0 and both team name textfields have been filled
         if (LoadMatch.gameID.value >= 1 && LoadMatch.teamName.value != "" && LoadMatch.oppName.value != ""
         ) {
             try {
@@ -130,6 +109,7 @@ class CRUDController: Controller() {
                 s.setInt(7, NewMatch.oppPoints.value)
                 val count = s.executeUpdate()
                 s.close()
+                //creates a variable match with the new data
                 val match = Match(
                     model.gameID.value,
                     model.teamName.value,
@@ -139,6 +119,7 @@ class CRUDController: Controller() {
                     model.oppGoals.value,
                     model.oppPoints.value
                 )
+                //Calls a create match function which takes in the match variable and updates the listOfMatches and tableview
                 createMatch(match)
                 println("$count rows were inserted")
             } catch (ex: SQLException) {
@@ -151,11 +132,14 @@ class CRUDController: Controller() {
         }
     }
 
+    //Adds the new match to the list of matches which will update the tableview
     fun createMatch(Match:Match){
         MainController.listOfMatches.add(Match)
     }
 
+    //Updates the database which new values and updates listOfMatches to update the tableview to match backend
     fun update(){
+        //Only updates if the game ID is not 0 and the team names are not empty
             if (LoadMatch.gameID.value >= 1 && LoadMatch.teamName.value != "" && LoadMatch.oppName.value != ""
             ) {
                 try {
@@ -174,6 +158,7 @@ class CRUDController: Controller() {
                 val count = s.executeUpdate()
                 println("$count rows were updated")
                 s.close()
+                    //Syncs the listOfMatches with the new updated mysql database using the original function to pull the data from the database
                 MainController.listOfMatches.asyncItems { MainController.matchList() }
             } catch (ex: SQLException) {
                 ex.printStackTrace()
@@ -184,6 +169,7 @@ class CRUDController: Controller() {
             }
     }
 
+    //Function used to reset the text fields when necessary
     fun resetFields(){
         NewMatch.gameID.set(0)
         NewMatch.teamName.set("")
